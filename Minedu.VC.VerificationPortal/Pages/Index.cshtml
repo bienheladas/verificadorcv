@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model IndexModel
 @{
     ViewData["Title"] = "Portal de Verificación de Certificados de Estudio";
@@ -26,14 +26,7 @@
         <div class="mt-5">
             <h5>Escanee este código con su billetera Inji</h5>
             <img src="data:image/png;base64,@Model.QrImageBase64" class="shadow rounded p-3" style="width:220px;" />
-
-            @if (Model.Result == null)
-            {
-                <p class="text-muted mt-2">Esperando presentación de la billetera...</p>
-                <a href="?sessionId=@Model.SessionId&profile=@Model.Profile" class="btn btn-outline-primary mt-2">
-                    🔄 Verificar resultado
-                </a>
-            }
+            <p class="text-muted mt-2">Esperando presentación...</p>
         </div>
     }
 
@@ -41,10 +34,14 @@
     {
         <div style="margin-top:20px; padding:12px; border:1px solid #ccc; background:#f9f9f9;">
             <strong>URI de presentación (real – encoded)</strong>
-            <pre style="white-space:pre-wrap; word-break:break-all;">@Model.PresentationUri</pre>
+            <pre style="white-space:pre-wrap; word-break:break-all;">
+                @Model.PresentationUri
+            </pre>
 
             <strong>URI de presentación (legible – decoded)</strong>
-            <pre style="white-space:pre-wrap; word-break:break-all; background:#eef;">@Model.PresentationUriDecoded</pre>
+            <pre style="white-space:pre-wrap; word-break:break-all; background:#eef;">
+                @Model.PresentationUriDecoded
+            </pre>
 
             <button onclick="navigator.clipboard.writeText('@Model.PresentationUri')">
                 Copiar URI real
@@ -58,6 +55,7 @@
             <div class="card-body">
                 <h3 class="card-title">Resultado de la Verificación</h3>
 
+
                 <p>
                     <strong>Estado general:</strong>
                     @if (Model.Result.Valid)
@@ -70,7 +68,9 @@
                     }
                 </p>
 
+
                 <p><strong>Motivo:</strong> @Model.Result.Reason</p>
+
 
                 @if (Model.Result.Summary.ContainsKey("status"))
                 {
@@ -78,11 +78,14 @@
                     <p><strong>Estado de la credencial:</strong> @(estado == "revoked" ? "❌ Revocada" : "✅ Activa")</p>
                 }
 
+
                 <h5 class="mt-3">Verificaciones individuales:</h5>
-                <ul class="list-unstyled">
+                <ul>
                     @foreach (var check in Model.Result.Checks)
                     {
-                        <li>@(check.Passed ? "✅" : "❌") <strong>@check.Name</strong>: @check.Message</li>
+                        <li>
+                            @(check.Passed ? "✅" : "❌") <strong>@check.Name</strong>: @check.Message
+                        </li>
                     }
                 </ul>
             </div>
