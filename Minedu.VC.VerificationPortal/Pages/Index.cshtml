@@ -94,7 +94,7 @@
                     }
                 </p>
 
-                @if (Model.Result.Valid && Model.Result.Summary.TryGetValue("Nombres", out var nombreObj))
+                @if (Model.Result.Valid && Model.Result.Summary != null && Model.Result.Summary.TryGetValue("Nombres", out var nombreObj))
                 {
                     var nombre = nombreObj?.ToString();
                     if (!string.IsNullOrWhiteSpace(nombre))
@@ -146,7 +146,7 @@
                 {
                     @if (Model.Profile == "evento")
                     {
-                        var dniConsulta = Model.Result.Summary.TryGetValue("DNI", out var dniObj) ? dniObj?.ToString() : null;
+                        var dniConsulta = Model.Result.Summary != null && Model.Result.Summary.TryGetValue("DNI", out var dniObj) ? dniObj?.ToString() : null;
                         <div class="alert alert-danger py-2 px-3 mb-2">
                             ❌ No fue posible registrar la asistencia. El DNI <strong>@(dniConsulta ?? "—")</strong> no figura en la lista de invitados del evento.
                         </div>
@@ -167,7 +167,7 @@
 
                 <p><strong>Motivo:</strong> @Model.Result.Reason</p>
 
-                @if (Model.Result.Summary.ContainsKey("status"))
+                @if (Model.Result.Summary != null && Model.Result.Summary.ContainsKey("status"))
                 {
                     var estado = Model.Result.Summary["status"].ToString();
                     <p><strong>Estado de la credencial:</strong> @(estado == "revoked" ? "❌ Revocada" : "✅ Activa")</p>
