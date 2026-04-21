@@ -45,7 +45,7 @@ public class IndexModel : PageModel
                 PresentationUriDecoded = WebUtility.UrlDecode(qrUri);
 
                 var qrGen = new QRCodeGenerator();
-                var qrData = qrGen.CreateQrCode(qrUri, QRCodeGenerator.ECCLevel.Q);
+                var qrData = qrGen.CreateQrCode(qrUri, QRCodeGenerator.ECCLevel.L);
                 var qrCode = new PngByteQRCode(qrData);
                 QrImageBase64 = Convert.ToBase64String(qrCode.GetGraphic(6));
             }
