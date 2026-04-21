@@ -57,8 +57,10 @@ public class IndexModel : PageModel
         {
             var json = await res.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.TryGetProperty("completed", out var completed) && completed.GetBoolean())
-                Result = JsonSerializer.Deserialize<VerificationResultDto>(json);
+            if (doc.RootElement.TryGetProperty("completed", out var completed) && completed.GetBoolean()
+                && doc.RootElement.TryGetProperty("result", out var resultEl))
+                Result = JsonSerializer.Deserialize<VerificationResultDto>(resultEl.GetRawText(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
     }
 
