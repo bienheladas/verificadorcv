@@ -94,6 +94,17 @@
                     }
                 </p>
 
+                @if (Model.Result.Valid && Model.Result.Summary.TryGetValue("Nombres", out var nombreObj))
+                {
+                    var nombre = nombreObj?.ToString();
+                    if (!string.IsNullOrWhiteSpace(nombre))
+                    {
+                        <div class="alert alert-success py-2 px-3 mb-2">
+                            👋 Bienvenido/a, <strong>@nombre</strong>. Su postulación ha sido recibida correctamente.
+                        </div>
+                    }
+                }
+
                 <p><strong>Motivo:</strong> @Model.Result.Reason</p>
 
                 @if (Model.Result.Summary.ContainsKey("status"))
