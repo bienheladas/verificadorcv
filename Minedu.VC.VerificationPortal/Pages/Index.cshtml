@@ -2,9 +2,33 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Portal de Verificación de Certificados de Estudio";
+
+    var verifiers = new Dictionary<string, (string Nombre, string Cargo, string Logo)>
+    {
+        ["empresa"]        = ("TechPerú Empleos S.A.C.", "Área de Recursos Humanos", "/assets/empresa-logo.svg"),
+        ["instituto"]      = ("Instituto Nacional de Arte del Perú", "Oficina de Admisión", "/assets/empresa-logo.svg"),
+        ["entidad-publica"]= ("Ministerio de Trabajo y Promoción del Empleo", "Dirección de Capacitación", "/assets/empresa-logo.svg"),
+    };
+
+    var perfil = Model.Profile ?? "empresa";
+    var (verNombre, verCargo, verLogo) = verifiers.TryGetValue(perfil, out var v)
+        ? v : ("TechPerú Empleos S.A.C.", "Área de Recursos Humanos", "/assets/empresa-logo.svg");
 }
 
 <div class="container mt-5 text-center">
+
+    @if (!string.IsNullOrEmpty(Model.Profile))
+    {
+        <div class="d-flex align-items-center justify-content-center gap-3 mb-4 p-3 border rounded bg-light">
+            <img src="@verLogo" alt="Logo @verNombre" style="width:64px;height:64px;object-fit:contain;" />
+            <div class="text-start">
+                <div class="fw-bold fs-5">@verNombre</div>
+                <div class="text-muted small">@verCargo</div>
+                <div class="text-muted small">Verificación de credenciales educativas</div>
+            </div>
+        </div>
+    }
+
     <h2 class="mb-4">Portal de Verificación de Credenciales</h2>
     <p class="text-muted mb-4">Seleccione el tipo de verificación que desea realizar</p>
 

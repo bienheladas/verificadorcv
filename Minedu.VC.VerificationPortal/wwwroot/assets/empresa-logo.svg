@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <circle cx="100" cy="100" r="100" fill="#1A3C6E"/>
+  <text x="100" y="90" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">TP</text>
+  <text x="100" y="138" font-family="Arial, sans-serif" font-size="16" fill="#A8C4E0" text-anchor="middle">TECHPERÚ</text>
+</svg>
