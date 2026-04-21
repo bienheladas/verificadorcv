@@ -7,7 +7,7 @@
     {
         ["empresa"]        = ("TechPerú Empleos S.A.C.", "Área de Recursos Humanos", "/assets/empresa-logo.svg"),
         ["evento"]         = ("Congreso Nacional de Educación 2025", "Secretaría de Registro", "/assets/empresa-logo.svg"),
-        ["entidad-publica"]= ("Ministerio de Trabajo y Promoción del Empleo", "Dirección de Capacitación", "/assets/empresa-logo.svg"),
+        ["pae"]            = ("Proveedor Qali Warma – Camión C-042", "Programa de Alimentación Escolar (PAE)", "/assets/empresa-logo.svg"),
     };
 
     var perfil = Model.Profile ?? "empresa";
@@ -36,7 +36,7 @@
         <form method="post">
             <button type="submit" name="profile" value="empresa" class="btn btn-primary btn-lg px-5 py-3">Empresa</button>
             <button type="submit" name="profile" value="evento" class="btn btn-success btn-lg px-5 py-3">Evento</button>
-            <button type="submit" name="profile" value="entidad-publica" class="btn btn-secondary btn-lg px-5 py-3">Entidad Pública</button>
+            <button type="submit" name="profile" value="pae" class="btn btn-secondary btn-lg px-5 py-3">Prog. Alimentación Escolar</button>
         </form>
     </div>
 
@@ -116,6 +116,24 @@
                                 </div>
                             }
                         }
+                        else if (Model.Profile == "pae")
+                        {
+                            var yaRecogio = Model.Result.Summary.TryGetValue("YaRecogio", out var yrp) && yrp?.ToString() == "True";
+                            var camion    = Model.Result.Summary.TryGetValue("NumeroCamion", out var cam) ? cam?.ToString() : "C-042";
+                            var hora      = Model.Result.Summary.TryGetValue("HoraRecojo",   out var hr)  ? hr?.ToString()  : "";
+                            @if (yaRecogio)
+                            {
+                                <div class="alert alert-warning py-2 px-3 mb-2">
+                                    ⚠️ <strong>@nombre</strong> — el desayuno ya fue retirado hoy. No se puede entregar nuevamente.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success py-2 px-3 mb-2">
+                                    🍽️ Desayuno entregado a <strong>@nombre</strong> a las <strong>@hora</strong> — Camión <strong>@camion</strong>.
+                                </div>
+                            }
+                        }
                         else
                         {
                             <div class="alert alert-success py-2 px-3 mb-2">
@@ -131,6 +149,12 @@
                         var dniConsulta = Model.Result.Summary.TryGetValue("DNI", out var dniObj) ? dniObj?.ToString() : null;
                         <div class="alert alert-danger py-2 px-3 mb-2">
                             ❌ No fue posible registrar la asistencia. El DNI <strong>@(dniConsulta ?? "—")</strong> no figura en la lista de invitados del evento.
+                        </div>
+                    }
+                    else if (Model.Profile == "pae")
+                    {
+                        <div class="alert alert-danger py-2 px-3 mb-2">
+                            ❌ No se puede entregar el desayuno. @Model.Result.Reason
                         </div>
                     }
                     else
