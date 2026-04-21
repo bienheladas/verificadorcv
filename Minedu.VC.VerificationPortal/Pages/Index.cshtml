@@ -128,8 +128,9 @@
                 {
                     @if (Model.Profile == "evento")
                     {
+                        var dniConsulta = Model.Result.Summary.TryGetValue("DNI", out var dniObj) ? dniObj?.ToString() : null;
                         <div class="alert alert-danger py-2 px-3 mb-2">
-                            ❌ No fue posible registrar la asistencia. La credencial no cumple con los requisitos del evento.
+                            ❌ No fue posible registrar la asistencia. El DNI <strong>@(dniConsulta ?? "—")</strong> no figura en la lista de invitados del evento.
                         </div>
                     }
                     else
