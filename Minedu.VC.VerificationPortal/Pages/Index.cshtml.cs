@@ -32,16 +32,24 @@ public class IndexModel : PageModel
         var baseUrl = _config["VerifierApiBaseUrl"];
         var client = _httpClientFactory.CreateClient();
 
-        // Regenerar QR (mismo URI → mismo QR)
-        var requestUri = $"{baseUrl}/verifier/request/{sessionId}";
-        var qrUri = BuildQrUri(baseUrl!, sessionId, requestUri);
-        PresentationUri = qrUri;
-        PresentationUriDecoded = WebUtility.UrlDecode(qrUri);
+        // Obtener qr_uri desde la API (evita regenerarlo localmente)
+        var sessionRes = await client.GetAsync($"{baseUrl}/verifier/sessions/{sessionId}");
+        if (sessionRes.IsSuccessStatusCode)
+        {
+            var sessionJson = await sessionRes.Content.ReadAsStringAsync();
+            using var sessionDoc = JsonDocument.Parse(sessionJson);
+            var qrUri = sessionDoc.RootElement.GetProperty("qr_uri").GetString();
+            if (!string.IsNullOrEmpty(qrUri))
+            {
+                PresentationUri = qrUri;
+                PresentationUriDecoded = WebUtility.UrlDecode(qrUri);
 
-        var qrGen = new QRCodeGenerator();
-        var qrData = qrGen.CreateQrCode(qrUri, QRCodeGenerator.ECCLevel.Q);
-        var qrCode = new PngByteQRCode(qrData);
-        QrImageBase64 = Convert.ToBase64String(qrCode.GetGraphic(6));
+                var qrGen = new QRCodeGenerator();
+                var qrData = qrGen.CreateQrCode(qrUri, QRCodeGenerator.ECCLevel.Q);
+                var qrCode = new PngByteQRCode(qrData);
+                QrImageBase64 = Convert.ToBase64String(qrCode.GetGraphic(6));
+            }
+        }
 
         // Consultar resultado una sola vez
         var res = await client.GetAsync($"{baseUrl}/verifier/result/{sessionId}");
@@ -65,18 +73,6 @@ public class IndexModel : PageModel
 
         var sessionId = doc.RootElement.GetProperty("session_id").GetString();
         return RedirectToPage(new { sessionId, profile });
-    }
-
-    private string BuildQrUri(string baseUrl, string sessionId, string requestUri)
-    {
-        string Encode(string v) => Uri.EscapeDataString(v);
-        var callbackUrl = $"{baseUrl.TrimEnd('/')}/verifier/callback/{sessionId}";
-        var clientMetadata = "{\"vp_formats\":{\"ldp_vc\":{\"proof_type\":[\"JsonWebSignature2020\"]}}}";
-        return $"openid4vp://authorize?" +
-               $"client_id={Encode(callbackUrl)}" +
-               $"&client_id_scheme=redirect_uri" +
-               $"&client_metadata={Encode(clientMetadata)}" +
-               $"&request_uri={Encode(requestUri)}";
     }
 
     public class VerificationResultDto
