@@ -228,7 +228,7 @@
 
                 <h5 class="mt-3">Verificaciones individuales:</h5>
                 <ul class="list-unstyled">
-                    @foreach (var check in Model.Result.Checks)
+                    @foreach (var check in Model.Result.Checks.Where(c => c.Name != "Holder binding"))
                     {
                         <li>@(check.Passed ? "✅" : "❌") <strong>@check.Name</strong>: @check.Message</li>
                     }
